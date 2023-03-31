@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="../assets/DataTables/datatables.min.css" />
+    <title>Default Datatables | Saepulfariz</title>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Ajax Datatables</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="area_lod">
+                            <table id="example" class="table" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Office</th>
+                                        <th>Extn.</th>
+                                        <th>Start date</th>
+                                        <th>Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Office</th>
+                                        <th>Extn.</th>
+                                        <th>Start date</th>
+                                        <th>Salary</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+                <p>Referensi :
+                    <a href="https://datatables.net/examples/ajax/"
+                        target="_blank">https://datatables.net/examples/ajax/</a>
+                    <a href="https://datatables.net/extensions/buttons/custom"
+                        target="_blank">https://datatables.net/extensions/buttons/custom</a>
+                    <a href="https://datatables.net/forums/discussion/21164/disable-sorting-of-one-column"
+                        target="_blank">https://datatables.net/forums/discussion/21164/disable-sorting-of-one-column</a>
+                    <a href="https://datatables.net/examples/basic_init/table_sorting.html"
+                        target="_blank">https://datatables.net/examples/basic_init/table_sorting.html</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/jquery.min.js"></script>
+    <script type="text/javascript" src="../assets/DataTables/datatables.min.js"></script>
+    <script src="../assets/blokui.js"></script>
+    <script src="../assets/loader.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var datatable = $('#example').DataTable({
+                // "dom": 'Bflrtip',
+                // buttons: [
+                //     'copy', 'excel', 'pdf'
+                // ],
+                processing: false,
+                fixedHeader: true,
+                responsive: true,
+                dom: 'Bflrtip',
+                buttons: [{
+                        extend: 'print',
+                        className: "btn bg-tranparent btn-warning",
+                        footer: true
+                    },
+                    {
+                        extend: 'excel',
+                        className: "btn bg-tranparent btn-warning",
+                        footer: true
+                    },
+                    {
+                        extend: 'pdf',
+                        className: "btn bg-tranparent btn-warning",
+                        footer: true
+                    },
+                    {
+                        extend: 'copy',
+                        className: "btn bg-tranparent btn-warning",
+                        footer: true
+                    },
+                    {
+                        text: 'Reload',
+                        className: "btn bg-tranparent btn-primary reload",
+                        action: function (e, dt, node, config) {
+                            dt.ajax.reload();
+                        }
+                    }
+                ],
+                "pageLength": 5,
+                "lengthMenu": [
+                    [5, 100, 1000, -1],
+                    [5, 100, 1000, "ALL"],
+                ],
+                order: [
+                    [3, 'asc']
+                ],
+
+                ajax: {
+                    url: "../data-object.json",
+                    type: "GET",
+                    data: {
+                        // 'f1': function () {
+                        //     return $('#f1').val()
+                        // },
+                    },
+                    beforeSend: function () {
+                        loading('area_lod');
+                        $('.reload').html('Loading..');
+                        $('.reload').addClass('disabled');
+
+                    },
+                    complete: function () {
+                        unblock('area_lod');
+                        $('.reload').html('Reload');
+                        $('.reload').removeClass('disabled');
+                    },
+                },
+                // {
+                //         data: 'no',
+                //         render: function (data, type, row, meta) {
+                //             return meta.row + 1;
+                //         }
+                //     },
+                // bug jika pake no ajax nya
+                columns: [{
+                        data: 'name'
+                    },
+                    {
+                        data: 'position'
+                    },
+                    {
+                        data: 'office',
+                        searchable: false
+                    },
+                    {
+                        data: 'extn'
+                    },
+                    {
+                        data: 'start_date',
+                        // bug jika pake custom di ajax
+                        // render: function (data, type, row) {
+                        //     return row.start_date
+                        // }
+                    },
+
+                    {
+                        data: 'salary'
+                    },
+                ],
+                "columnDefs": [{
+                    "targets": [0, 1, 2, 4, 5],
+                    "orderable": false
+                }]
+            });
+
+            function reloadTable() {
+                datatable.reload();
+            }
+        });
+    </script>
+</body>
+
+</html>
